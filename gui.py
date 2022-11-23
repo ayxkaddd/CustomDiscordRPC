@@ -1,16 +1,10 @@
-# "pyinstaller --noconfirm --onefile --windowed --icon "D:/Medal/icon.png" --add-data "C:/Users/Користувач/AppData/Local/Programs/Python/Python310/Lib/site-packages/customtkinter;customtkinter/"  gui.py"
-
-# gui
+import time
+import json
 
 import tkinter
 from tkinter import messagebox
+
 import customtkinter
-
-# time lol
-
-import time
-
-# work with discord RPC
 
 from rpc1 import RPC
 
@@ -18,14 +12,14 @@ customtkinter.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark",
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
 
 app = customtkinter.CTk()
-app.iconbitmap("D:/Download/icon.ico")
 app.geometry("500x680")
 app.resizable(width=False, height=False)
 app.title("Custom Discord RPC")
 
-
+config_path = "config.json"
 rpc = None
 sincetime = None
+
 
 def Connect():
     global rpc, sincetime
@@ -53,12 +47,7 @@ def Disconnect():
         print(f"{myexcept}")
 
 
-def ButtonsCheck():
-    b1label = Button1LabelEntry.get()
-    b1URL = Button1URLEntry.get()
-    b2label = Button2LabelEntry.get()
-    b2URL = Button2URLEntry.get()
-
+def ButtonsCheck(b1label, b1URL, b2label, b2URL):
     if not b1label:
         ButtonOne = ""
     else:
@@ -74,19 +63,61 @@ def ButtonsCheck():
             "label": f"{b2label}",
             "url": f"{b2URL}"
         }
+    
     return ButtonOne, ButtonTwo
 
 
 def UpdateRPC():
     global rpc, sincetime
+    check = LoadFromConfig.get()
     try:
-        ButtonOne, ButtonTwo = ButtonsCheck()
-        rpc.update(state=StateEntry.get(), details=DetailsEntry.get(), large_image=LargeImageKeyEntry.get(),
-                    large_text=LargeImageTextEntry.get(), small_image=SmallImageKeyEntry.get(),
-                    small_text=SmallImageTextEntry.get(), button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
+        if check == False:
+            ButtonOne, ButtonTwo = ButtonsCheck(Button1LabelEntry.get(), Button1URLEntry.get(),
+                                                Button2LabelEntry.get(), Button2URLEntry.get())
+
+            rpc.update(state=StateEntry.get(), details=DetailsEntry.get(), large_image=LargeImageKeyEntry.get(),
+                        large_text=LargeImageTextEntry.get(), small_image=SmallImageKeyEntry.get(),
+                        small_text=SmallImageTextEntry.get(), button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
+        else:
+            config = json.load(open(config_path, "r"))
+            config = config["vars"]
+
+            button_1, button_2 = ButtonsCheck(config["button_text_1"], config["button_url_1"],
+                                              config["button_text_2"], config["button_url_2"])
+            
+            rpc.update(state=config["state"], details=config["details"], large_image=config["large_url"],
+                       large_text=config["large_text"], small_image=config["small_url"], small_text=config["small_text"],
+                       button1=button_1, button2=button_2, time1=sincetime)
     except Exception as myexcept:
         print(f"{myexcept}")
-        messagebox.showinfo("Info", "You Disconnected! Click Connect button first!")
+        messagebox.showinfo("Info", "You Disconnected! Click Connect button first! (if u connected check output at terminal)")
+
+
+def SaveConfig():
+    # get whole things
+
+    things = {
+        "vars": {
+            "details": f"{DetailsEntry.get()}",
+            "state": f"{StateEntry.get()}",
+            "large_url": f"{LargeImageKeyEntry.get()}",
+            "large_text": f"{LargeImageTextEntry.get()}",
+            "small_url": f"{SmallImageKeyEntry.get()}",
+            "small_text": f"{SmallImageTextEntry.get()}",
+            "button_url_1": f"{Button1URLEntry.get()}",
+            "button_text_1": f"{Button2LabelEntry.get()}",
+            "button_url_2": f"{Button2URLEntry.get()}",
+            "button_text_2": f"{Button2LabelEntry.get()}",
+        }
+    }
+
+    # convert to json format and write to file
+
+    json_vars = json.dumps(things)
+
+    with open(config_path, "w") as config:
+        config.write(json_vars)
+        config.close()
 
 
 AppFrame1 = customtkinter.CTkFrame(master=app, width=485, height=300)
@@ -105,6 +136,7 @@ DisconnectButton.configure(state='enable', text="Disconnect")
 
 DetailsEntry = customtkinter.CTkEntry(master=AppFrame1, width=441, placeholder_text="Details")
 DetailsEntry.place(x=20, y=60)
+
 StateEntry = customtkinter.CTkEntry(master=AppFrame1, width=441, placeholder_text="State")
 StateEntry.place(x=20, y=100)
 
@@ -132,10 +164,10 @@ AppFrame2 = customtkinter.CTkFrame(master=app, width=485, height=320)
 AppFrame2.place(x=10, y=320)
 
 LargeImageLabel = customtkinter.CTkLabel(master=AppFrame2, text="Large Image", text_font=("default_theme", 11))
-LargeImageLabel.place(x=80, y=10)
+LargeImageLabel.place(x=94, y=10)
 
 SmallImageLabel = customtkinter.CTkLabel(master=AppFrame2, text="Small Image", text_font=("default_theme", 11))
-SmallImageLabel.place(x=240, y=10)
+SmallImageLabel.place(x=257, y=10)
 
 LargeImageKeyEntry = customtkinter.CTkEntry(master=AppFrame2, width=150, placeholder_text="Key")
 LargeImageKeyEntry.place(x=80, y=50)
@@ -150,10 +182,10 @@ SmallImageTextEntry = customtkinter.CTkEntry(master=AppFrame2, width=150, placeh
 SmallImageTextEntry.place(x=250, y=90)
 
 Button1Label = customtkinter.CTkLabel(master=AppFrame2, text="Button 1", text_font=("default_theme", 11))
-Button1Label.place(x=80, y=130)
+Button1Label.place(x=94, y=130)
 
 Button2Label = customtkinter.CTkLabel(master=AppFrame2, text="Button 2", text_font=("default_theme", 11))
-Button2Label.place(x=240, y=130)
+Button2Label.place(x=257, y=130)
 
 Button1LabelEntry = customtkinter.CTkEntry(master=AppFrame2, width=150, placeholder_text="Label")
 Button1URLEntry = customtkinter.CTkEntry(master=AppFrame2, width=150, placeholder_text="URL")
@@ -168,11 +200,23 @@ Button2LabelEntry.place(x=250, y=160)
 Button2URLEntry.place(x=250, y=200)
 
 UpdateRPCButton = customtkinter.CTkButton(master=AppFrame2, command=UpdateRPC)
-UpdateRPCButton.place(x=170, y=280)
-UpdateRPCButton.configure(state='enable', text="Update RPC")
+UpdateRPCButton.place(x=80, y=260)
+UpdateRPCButton.configure(state="enable", text="Update RPC")
+
+SaveConfigButton = customtkinter.CTkButton(master=AppFrame2, command=SaveConfig)
+SaveConfigButton.place(x=250, y=260)
+SaveConfigButton.configure(state="enable", text="Save to Config")
 
 ConnectOrDisconnectLabel = customtkinter.CTkButton(master=app, border_width=0, fg_color=None)
 ConnectOrDisconnectLabel.configure(state="enable", text="Disconnected")
 ConnectOrDisconnectLabel.place(x=360, y=645)
 
-app.mainloop()
+LoadFromConfig = customtkinter.CTkCheckBox(master=app)
+LoadFromConfig.configure(text="Load from config?")
+LoadFromConfig.place(x=20, y=645)
+
+
+if __name__ != "__main__":
+    app.mainloop()
+else:
+    print("run main.py")
