@@ -1,12 +1,13 @@
-import time
-import json
-
 import tkinter
 from tkinter import messagebox
-
 import customtkinter
 
+import time
+
 from rpc1 import RPC
+
+import os
+import json
 
 customtkinter.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -63,7 +64,7 @@ def ButtonsCheck(b1label, b1URL, b2label, b2URL):
             "label": f"{b2label}",
             "url": f"{b2URL}"
         }
-    
+
     return ButtonOne, ButtonTwo
 
 
@@ -84,7 +85,7 @@ def UpdateRPC():
 
             button_1, button_2 = ButtonsCheck(config["button_text_1"], config["button_url_1"],
                                               config["button_text_2"], config["button_url_2"])
-            
+
             rpc.update(state=config["state"], details=config["details"], large_image=config["large_url"],
                        large_text=config["large_text"], small_image=config["small_url"], small_text=config["small_text"],
                        button1=button_1, button2=button_2, time1=sincetime)
@@ -128,11 +129,11 @@ IdEntry.place(x=20, y=20)
 
 ConnectButton = customtkinter.CTkButton(master=AppFrame1, command=Connect)
 ConnectButton.place(x=170, y=20)
-ConnectButton.configure(state='enable', text="Connect")
+ConnectButton.configure(text="Connect")
 
 DisconnectButton = customtkinter.CTkButton(master=AppFrame1, command=Disconnect)
 DisconnectButton.place(x=320, y=20)
-DisconnectButton.configure(state='enable', text="Disconnect")
+DisconnectButton.configure(text="Disconnect")
 
 DetailsEntry = customtkinter.CTkEntry(master=AppFrame1, width=441, placeholder_text="Details")
 DetailsEntry.place(x=20, y=60)
@@ -200,19 +201,19 @@ Button2LabelEntry.place(x=250, y=160)
 Button2URLEntry.place(x=250, y=200)
 
 UpdateRPCButton = customtkinter.CTkButton(master=AppFrame2, command=UpdateRPC)
-UpdateRPCButton.place(x=80, y=260)
-UpdateRPCButton.configure(state="enable", text="Update RPC")
+UpdateRPCButton.place(x=170, y=260)
+UpdateRPCButton.configure(text="Update RPC")
 
-SaveConfigButton = customtkinter.CTkButton(master=AppFrame2, command=SaveConfig)
-SaveConfigButton.place(x=250, y=260)
-SaveConfigButton.configure(state="enable", text="Save to Config")
+SaveConfigButton = customtkinter.CTkButton(master=app, command=SaveConfig)
+SaveConfigButton.configure(corner_radius=6, text="Save Config", width=50)
+SaveConfigButton.place(x=160, y=645)
 
 ConnectOrDisconnectLabel = customtkinter.CTkButton(master=app, border_width=0, fg_color=None)
 ConnectOrDisconnectLabel.configure(state="enable", text="Disconnected")
 ConnectOrDisconnectLabel.place(x=360, y=645)
 
 LoadFromConfig = customtkinter.CTkCheckBox(master=app)
-LoadFromConfig.configure(text="Load from config?")
+LoadFromConfig.configure(text="Load from config")
 LoadFromConfig.place(x=20, y=645)
 
 
