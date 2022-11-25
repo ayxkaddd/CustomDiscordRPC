@@ -96,7 +96,7 @@ def UpdateRPC():
 def SaveConfig():
     # get whole things
 
-    things = {
+   things = {
         "vars": {
             "details":       DetailsEntry.get(),
             "state":         StateEntry.get(),
@@ -105,7 +105,7 @@ def SaveConfig():
             "small_url":     SmallImageKeyEntry.get(),
             "small_text":    SmallImageTextEntry.get(),
             "button_url_1":  Button1URLEntry.get(),
-            "button_text_1": Button2LabelEntry.get(),
+            "button_text_1": Button1LabelEntry.get(),
             "button_url_2":  Button2URLEntry.get(),
             "button_text_2": Button2LabelEntry.get(),
         }
