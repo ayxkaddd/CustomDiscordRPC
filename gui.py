@@ -69,6 +69,7 @@ def ButtonsCheck(b1label, b1URL, b2label, b2URL):
 
 def UpdateRPC():
     global rpc, sincetime
+
     check = LoadFromConfig.get()
     try:
         if check == False:
@@ -82,9 +83,16 @@ def UpdateRPC():
             config = json.load(open(ConfigNameEntry.get(), "r"))
             config = config["vars"]
 
+            appID = config["app_id"]
+            rpc = RPC(app_id=appID)
+            rpc.connect()
+
+            ConnectOrDisconnectLabel.configure(state="disabled", text="Connected")
+            ConnectOrDisconnectLabel.place(x=360, y=645)
+
             ButtonOne, ButtonTwo = ButtonsCheck(config["button_text_1"], config["button_url_1"],
-                                              config["button_text_2"], config["button_url_2"])
-            
+                                                config["button_text_2"], config["button_url_2"])
+
             rpc.update(state=config["state"], details=config["details"], large_image=config["large_url"],
                        large_text=config["large_text"], small_image=config["small_url"], small_text=config["small_text"],
                        button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
@@ -96,8 +104,9 @@ def UpdateRPC():
 def SaveConfig():
     # get whole things
 
-   things = {
+    things = {
         "vars": {
+            "app_id":        IdEntry.get(),          
             "details":       DetailsEntry.get(),
             "state":         StateEntry.get(),
             "large_url":     LargeImageKeyEntry.get(),
