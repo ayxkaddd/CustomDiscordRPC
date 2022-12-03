@@ -10,7 +10,7 @@ import customtkinter
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
-from rpc1 import RPC
+from DiscrodRpc import RPC
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
