@@ -39,3 +39,5 @@ Hit **Load From Config** box and fill **Config name** entry then click on **Upda
 There's how GUI looks like 
 
 <img src="https://i.imgur.com/gNk9J41.png">
+
+*Timestamp dosnt work cuz im lazy*
