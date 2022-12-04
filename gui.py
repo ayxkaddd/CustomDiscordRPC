@@ -94,7 +94,7 @@ def UpdateRPC():
                        small_text=SmallImageTextEntry.get(), button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
 
         else:
-            config = json.load(open(ConfigNameEntry.get(), "r"))
+            config = json.load(open("configs/" + ConfigNameEntry.get(), "r"))
             config = config["vars"]
 
             appID = config["app_id"]
