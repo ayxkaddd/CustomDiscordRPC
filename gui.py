@@ -20,6 +20,17 @@ ConfigNameEntry = "config.json"
 rpc = None
 sincetime = None
 
+def Send_Notify(self, body):
+    if os.name == "posix":
+        import dbus
+        obj = dbus.SessionBus().get_object("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+        obj = dbus.Interface(obj, "org.freedesktop.Notifications")
+        Gui.obj.Notify("", 0, "dialog-information", "Custom RPC", f"{body}", [], {"urgency": 1}, 1000)
+    else:
+        from win10toast import ToastNotifier
+        notify = ToastNotifier()
+        notify.show_toast("Custom RPC", body, duration=2, icon_path='icon.ico')
+
 
 def Connect():
     global rpc, sincetime
@@ -32,6 +43,7 @@ def Connect():
 
         ConnectOrDisconnectLabel.configure(state="disabled", text="Connected")
         ConnectOrDisconnectLabel.place(x=360, y=645)
+        Send_Notify("Conneected")
     except Exception as myexcept:
         print(f"{myexcept}")
         messagebox.showerror("Error", f"Wrong App ID")
@@ -43,6 +55,7 @@ def Disconnect():
         rpc.clearRPC()
         ConnectOrDisconnectLabel.configure(state="disabled", text="Disconnected")
         ConnectOrDisconnectLabel.place(x=360, y=645)
+        Send_Notify("Disconnected")
     except Exception as myexcept:
         print(f"{myexcept}")
 
@@ -79,6 +92,7 @@ def UpdateRPC():
             rpc.update(state=StateEntry.get(), details=DetailsEntry.get(), large_image=LargeImageKeyEntry.get(),
                        large_text=LargeImageTextEntry.get(), small_image=SmallImageKeyEntry.get(),
                        small_text=SmallImageTextEntry.get(), button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
+
         else:
             config = json.load(open(ConfigNameEntry.get(), "r"))
             config = config["vars"]
@@ -96,6 +110,7 @@ def UpdateRPC():
             rpc.update(state=config["state"], details=config["details"], large_image=config["large_url"],
                        large_text=config["large_text"], small_image=config["small_url"], small_text=config["small_text"],
                        button1=ButtonOne, button2=ButtonTwo, time1=sincetime)
+       Send_Notify("RPC Updated")
     except Exception as myexcept:
         print(f"{myexcept}")
         messagebox.showinfo("Info", "You Disconnected! Click Connect button first! (if u connected check output at terminal)")
@@ -128,7 +143,9 @@ def SaveConfig():
         config.write(json_vars)
         config.close()
 
+    Send_Notify("Config saved")
 
+    
 AppFrame1 = customtkinter.CTkFrame(master=app, width=485, height=300)
 AppFrame1.place(x=10, y=10)
 
