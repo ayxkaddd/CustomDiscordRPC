@@ -124,7 +124,7 @@ def SaveConfig():
 
     json_vars = json.dumps(things)
 
-    with open(ConfigNameEntry.get(), "w") as config:
+    with open("configs/" + ConfigNameEntry.get(), "w") as config:
         config.write(json_vars)
         config.close()
 
